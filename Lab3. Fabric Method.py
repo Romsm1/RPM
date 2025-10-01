@@ -62,12 +62,12 @@ if __name__ == "__main__":
     }
 
     while True:
-        choice = input("Ваш выбор: ").strip().lower()
+        choice = input("Ваш выбор: ").lower()
 
         if choice in factories:
             factory = factories[choice]
             document = factory.create_document()
-            filename = input("Введите имя файла (без расширения): ").strip()
+            filename = input("Введите имя файла (без расширения): ")
             document.save(filename)
             break
         else:
