@@ -63,7 +63,6 @@ class AccesControl:
 
 class AlarmSystem:
     def __init__(self):
-        self._enable = False
         self._active = False
 
     def activate(self) -> str:
@@ -74,21 +73,9 @@ class AlarmSystem:
         self._active = False
         return 'Сигнализация неактивна!'
 
-    def enable(self) -> str:
-        if self._active:
-            self._enable = True
-            return 'Сигнализация начала воспроизведение звука.'
-        return 'Сигнализация выключена!'
-
-    def stop_alarm(self) -> str:
-        if self._enable:
-            self._enable = False
-            return 'Звук сигнализации выключен.'
-        return 'Сигнализация уже выключена (звук)'
-
     def check(self) -> str:
-        if self._enable:
-            return f'Сигнализация работает. Сигнализация включена: {"да" if self._enable else "нет"}'
+        if self._active:
+            return f'Сигнализация работает.'
         return 'Сигнализация не работает.'
 
 
@@ -106,7 +93,6 @@ class SecuritySystemFacade:
                    self._camera.recording(),
                    self._acces.activate(),
                    self._alarm.activate(),
-                   self._alarm.stop_alarm(), # ДОДЕЛАТЬ
                    'Все системы безопасности активны!']
         return "\n".join(results)
 
@@ -117,7 +103,6 @@ class SecuritySystemFacade:
                    self._camera.stop_recording(),
                    self._acces.deactivated(),
                    self._alarm.deactivated(),
-                   self._alarm.stop_alarm(),
                    'Все системы безопасности неактивны!']
         return "\n".join(results)
 
@@ -137,4 +122,5 @@ if __name__ == "__main__":
     print(facade.active_all())
     print(facade.check_status())
     print(facade.deactivate_all())
+
     print(facade.check_status())
