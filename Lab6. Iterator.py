@@ -1,45 +1,56 @@
-from typing import List, Iterator, Iterable
-
 class Student:
-    def __init__(self, first_name: str, last_name: str, average_score: float) -> None:
-        self._first_name = first_name
-        self._last_name = last_name
-        self._average_score = average_score
+    def __init__(self, first_name, last_name, average_grade):
+        self.first_name = first_name
+        self.last_name = last_name
+        self.average_grade = average_grade
 
-    def __repr__(self) -> str:
-        return f"{self._first_name} {self._last_name} (средний балл: {self._average_score})"
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}, GPA: {self.average_grade}"
 
 
-class StudentGroupIterator(Iterator):
-    def __init__(self, students: List[Student]) -> None:
+class StudentGroupIterator:
+    def __init__(self, students, sort_by_grade=False, filter_last_name=None):
         self._students = students
+
+        if filter_last_name:
+            self._students = [s for s in self._students if s.last_name == filter_last_name]
+
+        if sort_by_grade:
+            self._students.sort(key=lambda s: s.average_grade, reverse=True)
+
         self._index = 0
 
-    def __next__(self) -> Student:
-        if self._index >= len(self._students):
-            raise StopIteration
-        student = self._students[self._index]
-        self._index += 1
-        return student
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self._index < len(self._students):
+            student = self._students[self._index]
+            self._index += 1
+            return student
+        raise StopIteration
 
 
-class StudentGroup(Iterable):
-    def __init__(self, students: List[Student] | None = None) -> None:
-        self._students = students or []
+class StudentGroup:
+    def __init__(self):
+        self.students = []
 
-    def add_student(self, student: Student) -> None:
-        self._students.append(student)
+    def add_student(self, student):
+        self.students.append(student)
 
-    def __iter__(self) -> StudentGroupIterator:
-        return StudentGroupIterator(self._students)
+    def get_iterator(self, sort_by_grade=False, filter_last_name=None):
+        return StudentGroupIterator(self.students, sort_by_grade, filter_last_name)
 
 
-if __name__ == "__main__":
-    group = StudentGroup()
-    group.add_student(Student("Иван", "Иванов", 4.5))
-    group.add_student(Student("Пётр", "Петров", 3.8))
-    group.add_student(Student("Светлана", "Смирнова", 4.9))
+group = StudentGroup()
+group.add_student(Student("Иван", "Иванов", 4.5))
+group.add_student(Student("Мария", "Петрова", 4.8))
+group.add_student(Student("Алексей", "Иванов", 4.2))
 
-    print("Список студентов в группе:")
-    for student in group:
-        print(student)
+print("Сортировка по баллу:")
+for student in group.get_iterator(sort_by_grade=True):
+    print(student)
+
+print("\n Только Ивановы:")
+for student in group.get_iterator(filter_last_name="Иванов"):
+    print(student)
