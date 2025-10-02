@@ -1,17 +1,21 @@
 from abc import ABC, abstractmethod
 
+
 class PaymentMethod(ABC):
     @abstractmethod
     def pay(self, amount: float) -> str:
         pass
 
+
 class CreditCardPayment(PaymentMethod):
     def pay(self, amount: float) -> str:
-        return f"Оплата {amount} CHF с помощью кредитной карты."
+        return f"Оплата {amount:.2f} с помощью кредитной карты."
+
 
 class EWalletPayment(PaymentMethod):
     def pay(self, amount: float) -> str:
-        return f"Оплата {amount} CHF через электронный кошелёк."
+        return f"Оплата {amount:.2f} через электронный кошелек."
+
 
 class PaymentPlatform:
     def __init__(self, method: PaymentMethod) -> None:
@@ -20,16 +24,20 @@ class PaymentPlatform:
     def make_payment(self, amount: float) -> str:
         pass
 
+
 class MobileAppPlatform(PaymentPlatform):
     def make_payment(self, amount: float) -> str:
         return f"Мобильное приложение: {self.method.pay(amount)}"
+
 
 class WebPlatform(PaymentPlatform):
     def make_payment(self, amount: float) -> str:
         return f"Веб-сайт: {self.method.pay(amount)}"
 
-def client_code(platform: PaymentPlatform, amount: float) -> None:
+
+def client_choice(platform: PaymentPlatform, amount: float) -> None:
     print(platform.make_payment(amount))
+
 
 if __name__ == "__main__":
     credit_card = CreditCardPayment()
@@ -42,13 +50,13 @@ if __name__ == "__main__":
     web_ewallet = WebPlatform(ewallet)
 
     print("Мобильное приложение + Кредитная карта:")
-    client_code(mobile_credit, 100.0)
+    client_choice(mobile_credit, 100.0)
 
     print("Веб-сайт + Кредитная карта:")
-    client_code(web_credit, 150.0)
+    client_choice(web_credit, 15021.0)
 
-    print("Мобильное приложение + Электронный кошелёк:")
-    client_code(mobile_ewallet, 75.5)
+    print("Мобильное приложение + Электронный кошелек:")
+    client_choice(mobile_ewallet, 444.5)
 
-    print("Веб-сайт + Электронный кошелёк:")
-    client_code(web_ewallet, 200.0)
+    print("Веб-сайт + Электронный кошелек:")
+    client_choice(web_ewallet, 200)
