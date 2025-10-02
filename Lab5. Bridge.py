@@ -1,41 +1,34 @@
 from abc import ABC, abstractmethod
 
-
 class PaymentMethod(ABC):
     @abstractmethod
     def pay(self, amount: float) -> str:
         pass
 
-
 class CreditCardPayment(PaymentMethod):
     def pay(self, amount: float) -> str:
-        return f"Оплата {amount} с помощью кредитной карты"
-
+        return f"Оплата {amount} CHF с помощью кредитной карты."
 
 class EWalletPayment(PaymentMethod):
     def pay(self, amount: float) -> str:
-        return f"Оплата {amount} через электронный кошелек"
-
+        return f"Оплата {amount} CHF через электронный кошелёк."
 
 class PaymentPlatform:
-    def __int__(self, method: PaymentMethod) -> None:
-        self._method = method
+    def __init__(self, method: PaymentMethod) -> None:
+        self.method = method
 
     def make_payment(self, amount: float) -> str:
         pass
 
-
 class MobileAppPlatform(PaymentPlatform):
     def make_payment(self, amount: float) -> str:
-        return f"Мобильное приложение: {self._method.pay(amount)}"
-
+        return f"Мобильное приложение: {self.method.pay(amount)}"
 
 class WebPlatform(PaymentPlatform):
     def make_payment(self, amount: float) -> str:
-        return f"Веб-сайт: {self._method.pay(amount)}"
+        return f"Веб-сайт: {self.method.pay(amount)}"
 
-
-def client_voice(platform: PaymentPlatform, amount: float) -> None:
+def client_code(platform: PaymentPlatform, amount: float) -> None:
     print(platform.make_payment(amount))
 
 if __name__ == "__main__":
@@ -49,4 +42,13 @@ if __name__ == "__main__":
     web_ewallet = WebPlatform(ewallet)
 
     print("Мобильное приложение + Кредитная карта:")
-    client_voice(mobile_credit, 100.00)
+    client_code(mobile_credit, 100.0)
+
+    print("Веб-сайт + Кредитная карта:")
+    client_code(web_credit, 150.0)
+
+    print("Мобильное приложение + Электронный кошелёк:")
+    client_code(mobile_ewallet, 75.5)
+
+    print("Веб-сайт + Электронный кошелёк:")
+    client_code(web_ewallet, 200.0)
