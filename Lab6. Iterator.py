@@ -5,7 +5,7 @@ class Student:
         self.average_grade = average_grade
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name}, GPA: {self.average_grade}"
+        return f"{self.first_name} {self.last_name}, Средний балл: {self.average_grade}"
 
 
 class StudentGroupIterator:
@@ -51,6 +51,6 @@ print("Сортировка по баллу:")
 for student in group.get_iterator(sort_by_grade=True):
     print(student)
 
-print("\n Только Ивановы:")
+print("Только Ивановы:")
 for student in group.get_iterator(filter_last_name="Иванов"):
     print(student)
