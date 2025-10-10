@@ -43,7 +43,7 @@ def delete_user(user: User, user_id: int) -> None:
 
 
 if __name__ == "__main__":
-    user1 = User("alice", "user")
+    user1 = User("Sonya", "user")
     print(f"Текущий пользователь: {user1.username} ({user1.role})")
     try:
         delete_user(user1, 123)
@@ -51,15 +51,15 @@ if __name__ == "__main__":
         print(f"Ошибка: {e}")
     print()
 
-    user2 = User("admin_bob", "admin")
+    user2 = User("admin_Alex", "admin")
     print(f"Текущий пользователь: {user2.username} ({user2.role})")
     try:
-        delete_user(user2, 456)
+        delete_user(user2, 435342455456)
     except PermissionError as e:
         print(f"Ошибка: {e}")
     print()
 
-    user3 = User("mod_kate", "moderator")
+    user3 = User("moder_Bill", "moderator")
     print(f"Текущий пользователь: {user3.username} ({user3.role})")
     try:
         delete_user(user3, 789)
@@ -67,7 +67,3 @@ if __name__ == "__main__":
         print(f"Ошибка: {e}")
     print()
 
-    print("Прямой вызов без проверки доступа:")
-    simple = DeleteUserComponent(999)
-    print(simple.delete_user())
-    print()
