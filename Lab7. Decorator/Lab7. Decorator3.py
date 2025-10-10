@@ -1,37 +1,24 @@
 class User:
     def __init__(self, username: str, role: str):
-        self._username = username
-        self._role = role
-
-    @property
-    def role(self):
-        return self._role
-
-    @property
-    def username(self):
-        return self._username
+        self.username = username
+        self.role = role
 
 
 class Component:
-    def __init__(self):
-        self.delete = None
-
     def delete_user(self) -> str:
         pass
 
 
 class DeleteUserComponent(Component):
     def __init__(self, user_id: int) -> None:
-        super().__init__()
-        self._user_id = user_id
+        self.user_id = user_id
 
     def delete_user(self) -> str:
-        return f"Пользователь с ID {self._user_id} успешно удален!"
+        return f"Пользователь с ID {self.user_id} успешно удален."
 
 
 class Decorator(Component):
     def __init__(self, component: Component) -> None:
-        super().__init__()
         self._component = component
 
     def delete_user(self) -> str:
@@ -41,12 +28,12 @@ class Decorator(Component):
 class AdminDecorator(Decorator):
     def __init__(self, component: Component, user: User) -> None:
         super().__init__(component)
-        self._user = user
+        self.user = user
 
     def delete_user(self) -> str:
-        if self._user.role != "admin":
-            raise PermissionError(f'Доступ запрещен! "{self._user.username}" не является администратором.')
-        return f"{self._user.username} выполнил удаление. {self._component.delete.user()}"
+        if self.user.role != 'admin':
+            raise PermissionError(f"Доступ запрещен: '{self.user.username}' не является администратором.")
+        return f"{self.user.username} выполнил удаление. {self._component.delete_user()}"
 
 
 def delete_user(user: User, user_id: int) -> None:
@@ -56,10 +43,31 @@ def delete_user(user: User, user_id: int) -> None:
 
 
 if __name__ == "__main__":
-    user1 = User('Sonya', 'admin')
-    print(f"Текущий пользователь: {user1.username} его роль - '{user1.role}'")
+    user1 = User("alice", "user")
+    print(f"Текущий пользователь: {user1.username} ({user1.role})")
     try:
-        delete_user(user1, 1234)
+        delete_user(user1, 123)
     except PermissionError as e:
         print(f"Ошибка: {e}")
+    print()
+
+    user2 = User("admin_bob", "admin")
+    print(f"Текущий пользователь: {user2.username} ({user2.role})")
+    try:
+        delete_user(user2, 456)
+    except PermissionError as e:
+        print(f"Ошибка: {e}")
+    print()
+
+    user3 = User("mod_kate", "moderator")
+    print(f"Текущий пользователь: {user3.username} ({user3.role})")
+    try:
+        delete_user(user3, 789)
+    except PermissionError as e:
+        print(f"Ошибка: {e}")
+    print()
+
+    print("Прямой вызов без проверки доступа:")
+    simple = DeleteUserComponent(999)
+    print(simple.delete_user())
     print()
