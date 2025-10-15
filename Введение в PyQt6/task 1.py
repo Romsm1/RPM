@@ -26,7 +26,7 @@ class RandomNumberApp(QWidget):
 
     def generate_number(self):
         number = random.randint(1, 1000)
-        self.label.setText(f"Случайное число: {number}")
+        self.label.setText(f"{number}")
 
 
 if __name__ == "__main__":
