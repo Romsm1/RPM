@@ -1,44 +1,37 @@
 import sys
-import random
-from PyQt6.QtWidgets import (
-    QApplication, QMainWindow, QLabel, QPushButton, QWidget, QVBoxLayout
-)
+from PyQt6.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLayout
 from PyQt6.QtGui import QFont
 from PyQt6.QtCore import Qt
 
-class RandomNumberMainWindow(QMainWindow):
+class Clicker(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Генератор случайных чисел")
+        self.setWindowTitle("Кликер")
         self.setFixedSize(300, 150)
 
-        # Создаём центральный виджет
-        central_widget = QWidget(self)
-        self.setCentralWidget(central_widget)
+        self.counter = 0  # начальное значение счётчика
 
-        # Создаём layout и элементы
-        layout = QVBoxLayout()
-
-        self.label = QLabel("Нажмите кнопку", self)
-        self.label.setFont(QFont("Arial", 16))
+        # Надпись
+        self.label = QLabel(str(self.counter), self)
+        self.label.setFont(QFont("Arial", 24))
         self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.button = QPushButton("Сгенерировать число", self)
-        self.button.clicked.connect(self.generate_number)
+        # Кнопка
+        self.button = QPushButton("Кликни", self)
+        self.button.clicked.connect(self.increment)
 
-        # Добавляем элементы в layout
+        # Layout
+        layout = QVBoxLayout()
         layout.addWidget(self.label)
         layout.addWidget(self.button)
+        self.setLayout(layout)
 
-        # Применяем layout к центральному виджету
-        central_widget.setLayout(layout)
-
-    def generate_number(self):
-        number = random.randint(1, 100)
-        self.label.setText(f"Случайное число: {number}")
+    def increment(self):
+        self.counter += 1
+        self.label.setText(str(self.counter))
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = RandomNumberMainWindow()
+    window = Clicker()
     window.show()
     sys.exit(app.exec())
