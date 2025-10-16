@@ -1,45 +1,77 @@
-import sys
 import random
-from PyQt6.QtWidgets import (
-    QApplication, QMainWindow, QWidget, QVBoxLayout,
-    QLineEdit, QPushButton, QMessageBox
-)
+import sys
+from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QVBoxLayout, QWidget, QLabel, QLineEdit, \
+    QMessageBox, QHBoxLayout
+from PyQt6.QtCore import Qt
 
-class RandomNumberApp(QMainWindow):
+
+class MainWin(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.initUI()
+
+    def initUI(self):
         self.setWindowTitle("Генератор случайных чисел")
 
-        central = QWidget()
         layout = QVBoxLayout()
 
-        self.start_input = QLineEdit()
-        self.start_input.setPlaceholderText("Начало диапазона")
-        self.end_input = QLineEdit()
-        self.end_input.setPlaceholderText("Конец диапазона")
+        self.label = QLabel('Введите диапозон чисел от и до:')
+        self.label.setAlignment(Qt.AlignmentFlag.AlignLeft)
 
-        generate_btn = QPushButton("Сгенерировать")
-        generate_btn.clicked.connect(self.show_random_number)
+        self.input_n1 = QLineEdit()
+        self.input_n1.setAlignment(Qt.AlignmentFlag.AlignLeft)
 
-        layout.addWidget(self.start_input)
-        layout.addWidget(self.end_input)
-        layout.addWidget(generate_btn)
-        central.setLayout(layout)
-        self.setCentralWidget(central)
+        self.input_n2 = QLineEdit()
+        self.input_n2.setAlignment(Qt.AlignmentFlag.AlignLeft)
 
-    def show_random_number(self):
+        self.button = QPushButton("Сгенерировать")
+        self.button.clicked.connect(self.the_button_was_clicked)
+
+        button_layout = QHBoxLayout()
+        button_layout.addWidget(self.input_n1)
+        button_layout.addWidget(self.input_n2)
+
+        layout.addStretch(1)
+        layout.addWidget(self.label)
+        layout.addLayout(button_layout)
+        layout.addWidget(self.button)
+        layout.addStretch(1)
+
+        widget = QWidget()
+        widget.setLayout(layout)
+        self.setCentralWidget(widget)
+
+    def the_button_was_clicked(self):
+        n1 = self.input_n1.text()
+        n2 = self.input_n2.text()
+        message = RandomNum(n1, n2)
+        message.exec()
+
+
+class RandomNum(QMessageBox):
+    def __init__(self, n1, n2):
+        super().__init__()
+        self.setWindowTitle("Случайное число")
+
         try:
-            start = int(self.start_input.text())
-            end = int(self.end_input.text())
-            if start > end:
-                raise ValueError("Начало должно быть меньше или равно концу.")
-            number = random.randint(start, end)
-            QMessageBox.information(self, "Результат", f"Случайное число: {number}")
-        except ValueError as e:
-            QMessageBox.warning(self, "Ошибка", f"Неверный ввод: {e}")
+            self.num1 = int(n1)
+            self.num2 = int(n2)
+            if self.num1 > self.num2:
+                output = 'Первое число должно быть меньше или равно второму!'
+            else:
+                output = str(random.randint(self.num1, self.num2))
+        except ValueError:
+            output = 'Какое-то число не является целым или не является числом!'
 
-if __name__ == "__main__":
+        self.setText(output)
+
+
+def main():
     app = QApplication(sys.argv)
-    window = RandomNumberApp()
+    window = MainWin()
     window.show()
     sys.exit(app.exec())
+
+
+if __name__ == "__main__":
+    main()
