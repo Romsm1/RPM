@@ -84,12 +84,12 @@ class TextEditor(QWidget):
 
     def update_stats(self):
         text = self.text_edit.toPlainText()
-        raw_words = text.replace('\n', ' ').split()
+        raw_words = text.split()
         words = []
 
         for w in raw_words:
+            cleaned = ''.join(c for c in w if c.isalpha() or c == '-')
             if any(c.isalpha() for c in w):
-                cleaned = ''.join(c for c in w if c.isalpha() or c == '-')
                 words.append(cleaned)
 
         self.char_label.setText(f"Символов: {len(text)}")
