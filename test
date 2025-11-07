@@ -89,7 +89,7 @@ class TextEditor(QWidget):
 
         for w in raw_words:
             cleaned = ''.join(c for c in w if c.isalpha() or c == '-')
-            if cleaned:
+            if any(c.isalpha() for c in cleaned):
                 words.append(cleaned)
 
         self.char_label.setText(f"Символов: {len(text)}")
