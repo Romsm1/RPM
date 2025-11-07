@@ -1,7 +1,8 @@
 import sys
-from PyQt6.QtWidgets import (QWidget, QLabel, QApplication, QPushButton, QBoxLayout, QFileDialog,
-                             QSlider, QComboBox, QHBoxLayout, QVBoxLayout)
-
+from PyQt6.QtWidgets import (
+    QApplication, QWidget, QLabel, QPushButton, QVBoxLayout,
+    QHBoxLayout, QFileDialog, QSlider, QComboBox
+)
 from PyQt6.QtGui import QPixmap, QImage, QTransform, QColor
 from PyQt6.QtCore import Qt, QPoint
 
@@ -9,21 +10,21 @@ from PyQt6.QtCore import Qt, QPoint
 class ImageEditor(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Редактор изображений")
+        self.setWindowTitle("PyQt6 Image Editor")
         self.image = None
         self.original_image = None
 
         self.label = QLabel("Загрузите изображение")
         self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.load_button = QPushButton("Открыть файл")
-        self.load_button.clicked.connect(self.load_image)
+        self.load_btn = QPushButton("Открыть файл")
+        self.load_btn.clicked.connect(self.load_image)
 
-        self.rotate_left_button = QPushButton("Против часовой стрелки")
-        self.rotate_left_button.clicked.connect(lambda: self.rotate_image(90))
+        self.rotate_left_btn = QPushButton("⟲ 90°")
+        self.rotate_left_btn.clicked.connect(lambda: self.rotate_image(-90))
 
-        self.rotate_right_button = QPushButton("По часовой стрелки")
-        self.rotate_right_button.clicked.connect(lambda: self.rotate_image(90))
+        self.rotate_right_btn = QPushButton("⟳ 90°")
+        self.rotate_right_btn.clicked.connect(lambda: self.rotate_image(90))
 
         self.opacity_slider = QSlider(Qt.Orientation.Horizontal)
         self.opacity_slider.setRange(0, 255)
@@ -35,14 +36,14 @@ class ImageEditor(QWidget):
         self.channel_selector.currentTextChanged.connect(self.update_image)
 
         controls = QHBoxLayout()
-        controls.addWidget(self.load_button)
-        controls.addWidget(self.rotate_left_button)
-        controls.addWidget(self.rotate_right_button)
+        controls.addWidget(self.load_btn)
+        controls.addWidget(self.rotate_left_btn)
+        controls.addWidget(self.rotate_right_btn)
 
         sliders = QHBoxLayout()
         sliders.addWidget(QLabel("Прозрачность"))
         sliders.addWidget(self.opacity_slider)
-        sliders.addWidget(QLabel("Цветовой канал"))
+        sliders.addWidget(QLabel("Канал"))
         sliders.addWidget(self.channel_selector)
 
         layout = QVBoxLayout()
@@ -52,10 +53,11 @@ class ImageEditor(QWidget):
         self.setLayout(layout)
 
     def load_image(self):
-        file_path, _ = QFileDialog.getOpenFileName(self, "Открыть изображение", "",
-                                                   "Изображения (*.png *.jpg *.jpeg *.bmp)")
+        file_path, _ = QFileDialog.getOpenFileName(self, "Выберите изображение", "", "Images (*.png *.jpg *.bmp)")
         if file_path:
-            self.original_image = QImage(file_path)
+            self.original_image = QImage(file_path).convertToFormat(QImage.Format.Format_ARGB32)
+            if self.original_image.width() > 3000 or self.original_image.height() > 3000:
+                self.original_image = self.original_image.scaled(1920, 1080, Qt.AspectRatioMode.KeepAspectRatio)
             self.image = self.original_image.copy()
             self.update_image()
 
@@ -63,20 +65,20 @@ class ImageEditor(QWidget):
         if self.image:
             transform = QTransform().rotate(angle)
             self.image = self.image.transformed(transform)
-            self.update_image
+            self.update_image()
 
     def update_image(self):
         if not self.image:
             return
 
-        image = self.image.copy()
+        img = self.image.copy()
         channel = self.channel_selector.currentText()
         opacity = self.opacity_slider.value()
 
-        for y in range(image.height()):
-            for x in range(image.width()):
+        for y in range(img.height()):
+            for x in range(img.width()):
                 point = QPoint(x, y)
-                color = image.pixelColor(point)
+                color = img.pixelColor(point)
                 r, g, b = color.red(), color.green(), color.blue()
 
                 if channel == "R":
@@ -86,12 +88,12 @@ class ImageEditor(QWidget):
                 elif channel == "B":
                     color = QColor(0, 0, b, opacity)
                 else:
-                    color.setAplha(opacity)
+                    color.setAlpha(opacity)
 
-                image.setPixelColor(point, color)
+                img.setPixelColor(point, color)
 
-                pixmap = QPixmap.fromImage(image)
-                self.label.setPixmap(pixmap.scaled(self.label.size(), Qt.AspectRatioMode.KeepAspectRatio))
+        pixmap = QPixmap.fromImage(img)
+        self.label.setPixmap(pixmap.scaled(self.label.size(), Qt.AspectRatioMode.KeepAspectRatio))
 
     def resizeEvent(self, event):
         self.update_image()
